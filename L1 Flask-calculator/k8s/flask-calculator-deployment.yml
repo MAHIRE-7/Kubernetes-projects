@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calc-app
+  namespace: calc-app-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: calc-app
+  template:
+    metadata:
+      labels:
+        app: calc-app
+    spec:
+      containers:
+      - name: calc-app
+        image: manodayahire/flask-calculator:latest
+        ports:
+        - containerPort: 5000
