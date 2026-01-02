@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-app-deployment
+  namespace: weather-app-ns
+spec:
+  replicas: 2
+  selector: 
+    matchLabels:
+      app: weather-app
+  template:
+    metadata:
+      labels:
+        app: weather-app
+    spec: 
+      containers:
+        - name: weather-app
+          image: manodayahire/weather-app:latest
+          ports:
+           - containerPort: 3000
+
+  
