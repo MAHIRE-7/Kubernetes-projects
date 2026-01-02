@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-webpage-deployment
+  namespace: web-page-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simple-webpage
+  template:
+    metadata:
+      labels:
+        app: simple-webpage
+    spec:
+      containers:
+      - name: simple-webpage-container
+        image: manodayahire/l1-simple-webpage:latest
+        ports:
+        - containerPort: 80
