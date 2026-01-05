@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tic-tac-toe-deployment
+  namespace: tic-tac-toe-namespace
+spec: 
+  selector:
+    matchLabels:
+      app: tic-tac-toe
+  
+  template:
+    metadata:
+      labels:
+        app: tic-tac-toe
+    spec:
+      containers:
+        - name: tic-tac-toe-containers
+          image: manodayahire/tic-tac-toe-game
+          ports:
+            - containerPort: 3000
+          
