@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-quote-apps
+  namespace: random-quote-ns 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: random-quote-apps
+  
+  template:
+    metadata:
+      labels:
+        app: random-quote-apps
+    spec:
+      containers:
+      - name: random-quote-app-containers
+        image: manodayahire/quote-app:latest
+        ports:
+        - containerPort: 3000

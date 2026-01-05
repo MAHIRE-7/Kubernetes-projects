@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Quote Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .container { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; backdrop-filter: blur(10px); }
+        .quote-box { background: rgba(255,255,255,0.2); padding: 30px; border-radius: 10px; margin: 20px 0; min-height: 150px; display: flex; flex-direction: column; justify-content: center; }
+        .quote-text { font-size: 24px; font-style: italic; margin-bottom: 20px; line-height: 1.4; }
+        .quote-author { font-size: 18px; text-align: right; font-weight: bold; }
+        button { background: #ff6b6b; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 25px; cursor: pointer; margin: 20px auto; display: block; }
+        button:hover { background: #ff5252; transform: translateY(-2px); }
+        h1 { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💭 Random Quote Generator</h1>
+        <div class="quote-box" id="quoteBox">
+            <div class="quote-text" id="quoteText">Click the button to get an inspiring quote!</div>
+            <div class="quote-author" id="quoteAuthor"></div>
+        </div>
+        <button onclick="getRandomQuote()">Get New Quote</button>
+    </div>
+
+    <script>
+        async function getRandomQuote() {
+            try {
+                const response = await fetch('/api/quote');
+                const quote = await response.json();
+                
+                document.getElementById('quoteText').textContent = `"${quote.text}"`;
+                document.getElementById('quoteAuthor').textContent = `— ${quote.author}`;
+            } catch (error) {
+                document.getElementById('quoteText').textContent = 'Failed to load quote. Please try again.';
+                document.getElementById('quoteAuthor').textContent = '';
+            }
+        }
+
+        // Load a quote on page load
+        window.onload = getRandomQuote;
+    </script>
+</body>
+</html>

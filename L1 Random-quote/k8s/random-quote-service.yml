@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: random-quote-service
+  namespace: random-quote-ns 
+spec:
+  selector:
+    app: random-quote-apps
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30120
+  type: NodePort
