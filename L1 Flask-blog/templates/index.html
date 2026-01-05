@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .post { background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #007bff; }
+        .post-title { color: #007bff; margin-bottom: 10px; }
+        .post-date { color: #6c757d; font-size: 14px; margin-bottom: 15px; }
+        .add-post { background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 30px; }
+        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        textarea { height: 100px; resize: vertical; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Flask Blog on K8s</h1>
+        <p>Share your thoughts with the world!</p>
+    </div>
+
+    <div class="add-post">
+        <h3>Add New Post</h3>
+        <input type="text" id="postTitle" placeholder="Post title">
+        <textarea id="postContent" placeholder="Write your post content here..."></textarea>
+        <button onclick="addPost()">Publish Post</button>
+    </div>
+
+    <div id="posts">
+        {% for post in posts %}
+        <div class="post">
+            <h2 class="post-title">{{ post.title }}</h2>
+            <div class="post-date">{{ post.date }}</div>
+            <p>{{ post.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        async function addPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to add post');
+                }
+            } catch (error) {
+                alert('Error adding post');
+            }
+        }
+    </script>
+</body>
+</html>
