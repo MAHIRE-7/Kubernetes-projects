@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rps-deployment
+  namespace: rps-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rps-app
+  template:
+    metadata:
+      labels:
+        app: rps-app
+    spec:
+      containers:
+      - name: rps-container
+        image: manodayahire/rock-paper-scissor-game
+        ports:
+        - containerPort: 3000
+      

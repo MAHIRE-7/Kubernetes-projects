@@ -15,7 +15,7 @@ spec:
         app: random-quote-apps
     spec:
       containers:
-      - name: random-quote-app-containers
-        image: manodayahire/quote-app:latest
-        ports:
-        - containerPort: 3000
+        - name: random-quote-app-containers
+          image: manodayahire/quote-app:latest
+          ports:
+            - containerPort: 3000
