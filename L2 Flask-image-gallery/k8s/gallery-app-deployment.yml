@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: gallery-app-deployment
+  namespace: gallery-ns
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gallery-app
+  template:
+    metadata:
+      labels:
+        app: gallery-app
+    spec:
+      volumes:
+        - name: image-storage
+          persistentVolumeClaim:
+            claimName: image-app-pvc
+      containers:
+        - name: gallery-app
+          image: manodayahire/image-gallery-app:latest
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: image-storage
+              mountPath: /app/uploads 
+    

@@ -1,34 +1,27 @@
-# Simple Webpage Project
+# Simple Webpage
 
-A basic HTML and CSS webpage demonstrating fundamental web development concepts.
+Basic HTML/CSS webpage for Kubernetes deployment.
 
-## Files
+## Port
+- **NodePort**: 30085
+- **Container Port**: 80
 
-- `index.html` - Main HTML structure
-- `style.css` - CSS styling
-- `README.md` - Project documentation
+## Quick Start
+```bash
+# Build image
+docker build -t simple-webpage:latest .
 
-## Features
+# Deploy to Kubernetes
+kubectl apply -f k8s/
 
-- Responsive design
-- Navigation menu
-- Clean, modern styling
-- Semantic HTML structure
+# Access app
+minikube service simple-webpage-service
+```
 
-## How to Run
+## Developer Info
+- **Framework**: HTML/CSS/Nginx
+- **Features**: Static webpage, responsive design
+- **K8s Resources**: Deployment, Service, Namespace
 
-1. Open `index.html` in any web browser
-2. Or serve locally:
-   ```bash
-   # Using Python
-   python -m http.server 8000
-   
-   # Using Node.js
-   npx serve .
-   ```
-
-## Structure
-
-- Header with navigation
-- Main content sections (Home, About, Contact)
-- Fixed footer
+## Challenge
+Learn containerizing static websites and basic Kubernetes deployment.
