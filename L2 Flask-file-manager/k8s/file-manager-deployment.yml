@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-manager-deployment 
+  namespace: file-manager-ns
+spec:
+  
+  replicas: 1
+  selector: 
+    matchLabels:        
+      app: file-manager-app
+  template:
+    metadata: 
+      labels: 
+        app: file-manager-app
+    spec:
+      volumes:
+      - name: pvc-claim
+        persistentVolumeClaim:
+          claimName: file-manager-pvc
+      containers:
+        - name: file-manager-container 
+          image: manodayahire/file-manager
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: pvc-claim
+              mountPath: /app/uploads
