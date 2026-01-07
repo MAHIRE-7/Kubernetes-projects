@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:   
+  name: notes-app-deployment
+  namespace: ns-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app
+  template:
+    metadata:
+      labels:
+        app: notes-app
+    spec:
+      volumes:
+        - name: notes-app-volume
+          persistentVolumeClaim:
+            claimName: notes-app-pvc
+      containers:
+        - name: notes-app-containers
+          image: manodayahire/notes-app:latest
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: notes-app-volume
+              mountPath: /app/notes
+              

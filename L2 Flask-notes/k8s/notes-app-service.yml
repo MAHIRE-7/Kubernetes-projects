@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-app-service
+  namespace: ns-2
+spec:
+  selector:
+    app: notes-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30123
+  type: NodePort
