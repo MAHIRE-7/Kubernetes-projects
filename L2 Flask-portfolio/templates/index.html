@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Developer Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        
+        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 0; text-align: center; }
+        .hero h1 { font-size: 3.5em; margin-bottom: 20px; animation: fadeInUp 1s ease; }
+        .hero p { font-size: 1.3em; margin-bottom: 30px; animation: fadeInUp 1s ease 0.2s both; }
+        .hero .btn { display: inline-block; padding: 15px 30px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 50px; border: 2px solid white; transition: all 0.3s; animation: fadeInUp 1s ease 0.4s both; }
+        .hero .btn:hover { background: white; color: #667eea; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .section { padding: 80px 0; }
+        .section h2 { text-align: center; font-size: 2.5em; margin-bottom: 50px; color: #333; }
+        
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .project-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+        .project-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .project-header { background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); padding: 30px; color: white; }
+        .project-title { font-size: 1.5em; margin-bottom: 10px; }
+        .project-date { opacity: 0.9; font-size: 0.9em; }
+        .project-body { padding: 30px; }
+        .project-description { margin-bottom: 20px; color: #666; }
+        .project-tech { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tech-tag { background: #e3f2fd; color: #1976d2; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; }
+        .project-links { display: flex; gap: 15px; }
+        .project-links a { padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .github-link { background: #333; color: white; }
+        .demo-link { background: #4caf50; color: white; }
+        .project-links a:hover { transform: scale(1.05); }
+        
+        .footer { background: #333; color: white; text-align: center; padding: 40px 0; }
+        .admin-link { position: fixed; bottom: 20px; right: 20px; background: #ff4757; color: white; padding: 15px; border-radius: 50%; text-decoration: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .no-projects { text-align: center; padding: 60px; color: #666; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1>👨‍💻 Developer Portfolio</h1>
+            <p>Showcasing amazing projects with modern design</p>
+            <a href="#projects" class="btn">View Projects</a>
+        </div>
+    </section>
+    
+    <section class="section" id="projects">
+        <div class="container">
+            <h2>Featured Projects</h2>
+            {% if projects %}
+                <div class="projects-grid">
+                    {% for project in projects %}
+                        <div class="project-card">
+                            <div class="project-header">
+                                <div class="project-title">{{ project.title }}</div>
+                                <div class="project-date">{{ project.date }}</div>
+                            </div>
+                            <div class="project-body">
+                                <div class="project-description">{{ project.description }}</div>
+                                <div class="project-tech">
+                                    {% for tech in project.tech.split(',') %}
+                                        <span class="tech-tag">{{ tech.strip() }}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="project-links">
+                                    {% if project.github %}
+                                        <a href="{{ project.github }}" class="github-link" target="_blank">GitHub</a>
+                                    {% endif %}
+                                    {% if project.demo %}
+                                        <a href="{{ project.demo }}" class="demo-link" target="_blank">Live Demo</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-projects">
+                    <h3>No projects yet!</h3>
+                    <p>Add your first project using the admin panel.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Developer Portfolio. Built with Flask & Kubernetes.</p>
+        </div>
+    </footer>
+    
+    <a href="/admin" class="admin-link">⚙️</a>
+</body>
+</html>
