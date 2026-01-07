@@ -1,0 +1,4 @@
+apiVersion: v1
+kind: Namespace 
+metadata:
+  name: ns-1 #use proper namespace name this is for demo only

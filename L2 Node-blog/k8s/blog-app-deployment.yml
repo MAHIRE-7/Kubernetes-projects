@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-app-deployment 
+  namespace: ns-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-app
+
+# pod defination 
+  template:
+    metadata:
+      labels:
+        app: blog-app
+    spec: 
+      volumes:
+        - name: pvc-1
+          persistentVolumeClaim:
+            claimName: pvc-claim
+
+      containers:
+      - name: node-blog-app
+        image: manodayahire/node-blog-app:latest
+        ports:
+         - containerPort: 3000
+        volumeMounts:
+        - name: pvc-1
+          mountPath: /app/data
