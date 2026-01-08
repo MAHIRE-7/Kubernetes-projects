@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restro-deployment
+  namespace: restro-nss
+  
+spec:
+  replicas: 3
+  selector:     
+    matchLabels:
+      app: restro-app
+  
+  template:
+    metadata:
+      labels:
+       app: restro-app
+    spec:
+      containers:
+      - name: restro-app
+        image: manodayahire/restro-app:latest
+        ports:
+        - containerPort: 3000
+        env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: restro-configmap
+                key: DB_HOST
+
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: restro-configmap
+                key: DB_USER
+
+          - name: DB_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: restro-configmap
+                key: DB_PASSWORD
+
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: restro-configmap
+                key: DB_NAME
+
+
+
