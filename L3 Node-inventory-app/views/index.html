@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📦 Inventory Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0f0f23; color: #e2e8f0; }
+        
+        .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); padding: 20px; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .logo i { font-size: 2em; color: #00d4ff; }
+        .logo h1 { font-size: 1.5em; font-weight: 700; }
+        
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .nav-item:hover { background: rgba(0, 212, 255, 0.1); }
+        .nav-item.active { background: linear-gradient(135deg, #00d4ff, #0099cc); color: white; }
+        .nav-item i { width: 20px; }
+        
+        .main-content { margin-left: 280px; padding: 30px; min-height: 100vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 2em; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        
+        .stat-card { background: linear-gradient(135deg, #1e293b, #334155); padding: 25px; border-radius: 16px; border: 1px solid #334155; }
+        .stat-card h3 { font-size: 2.5em; font-weight: 700; margin-bottom: 8px; }
+        .stat-card p { color: #94a3b8; font-size: 0.9em; }
+        .stat-card.primary h3 { color: #00d4ff; }
+        .stat-card.danger h3 { color: #ff6b6b; }
+        .stat-card.success h3 { color: #51cf66; }
+        
+        .section { background: linear-gradient(135deg, #1e293b, #334155); border-radius: 16px; padding: 30px; margin-bottom: 30px; border: 1px solid #334155; }
+        .section.hidden { display: none; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #cbd5e1; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #e2e8f0; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1); }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #00d4ff, #0099cc); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3); }
+        .btn-success { background: linear-gradient(135deg, #51cf66, #37b24d); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ff6b6b, #e03131); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffd43b, #fab005); color: #1a1a2e; }
+        
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .product-card { background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 12px; padding: 20px; border: 1px solid #334155; transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); }
+        .product-card.low-stock { border-color: #ff6b6b; background: linear-gradient(135deg, #2d1b1b, #3d2626); }
+        
+        .product-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .product-name { font-size: 1.2em; font-weight: 600; }
+        .stock-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 500; }
+        .stock-ok { background: rgba(81, 207, 102, 0.2); color: #51cf66; }
+        .stock-low { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+        
+        .product-details { margin-bottom: 20px; }
+        .product-details p { margin-bottom: 8px; color: #94a3b8; }
+        .product-details strong { color: #e2e8f0; }
+        
+        .stock-controls { display: flex; gap: 10px; align-items: end; }
+        .stock-controls select { width: 100px; }
+        .stock-controls input[type="number"] { width: 80px; }
+        .stock-controls input[type="text"] { flex: 1; }
+        
+        .alert-item { background: linear-gradient(135deg, #2d1b1b, #3d2626); border: 1px solid #ff6b6b; border-radius: 12px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .alert-content h4 { color: #ff6b6b; margin-bottom: 5px; }
+        .alert-content p { color: #94a3b8; font-size: 0.9em; }
+        
+        .loading { display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top: 3px solid #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .empty-state { text-align: center; padding: 60px 20px; color: #64748b; }
+        .empty-state i { font-size: 4em; margin-bottom: 20px; }
+        .empty-state h3 { margin-bottom: 10px; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-cube"></i>
+            <h1>Inventory Pro</h1>
+        </div>
+        
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="showSection('products')">
+            <i class="fas fa-box"></i>
+            <span>Products</span>
+        </div>
+        <div class="nav-item" onclick="showSection('stock')">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Stock Management</span>
+        </div>
+        <div class="nav-item" onclick="showSection('alerts')">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Low Stock Alerts</span>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="section">
+            <div class="header">
+                <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
+            </div>
+            <div id="dashboardStats" class="stats-grid"></div>
+            <div id="recentProducts" class="products-grid"></div>
+        </div>
+        
+        <!-- Products -->
+        <div id="products" class="section hidden">
+            <div class="header">
+                <h2><i class="fas fa-box"></i> Product Management</h2>
+            </div>
+            
+            <form id="productForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Product Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-barcode"></i> SKU</label>
+                        <input type="text" id="productSku" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-list"></i> Category</label>
+                        <select id="productCategory" required>
+                            <option value="electronics">📱 Electronics</option>
+                            <option value="clothing">👕 Clothing</option>
+                            <option value="books">📚 Books</option>
+                            <option value="home">🏠 Home & Garden</option>
+                            <option value="sports">⚽ Sports</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-cubes"></i> Initial Quantity</label>
+                        <input type="number" id="productQuantity" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-exclamation-circle"></i> Minimum Stock</label>
+                        <input type="number" id="productMinStock" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Price</label>
+                        <input type="number" id="productPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-truck"></i> Supplier</label>
+                        <input type="text" id="productSupplier">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </form>
+            
+            <div id="productsList" class="products-grid"></div>
+        </div>
+        
+        <!-- Stock Management -->
+        <div id="stock" class="section hidden">
+            <div class="header">
+                <h2><i class="fas fa-exchange-alt"></i> Stock Management</h2>
+            </div>
+            <div id="stockProducts" class="products-grid"></div>
+        </div>
+        
+        <!-- Alerts -->
+        <div id="alerts" class="section hidden">
+            <div class="header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h2>
+            </div>
+            <div id="alertsList"></div>
+        </div>
+    </div>
+    
+    <script>
+        let products = [];
+        
+        function showSection(sectionName) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+            
+            event.target.closest('.nav-item').classList.add('active');
+            document.getElementById(sectionName).classList.remove('hidden');
+            
+            if (sectionName === 'dashboard') loadDashboard();
+            if (sectionName === 'products') loadProducts();
+            if (sectionName === 'stock') loadStockManagement();
+            if (sectionName === 'alerts') loadAlerts();
+        }
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                products = await response.json();
+                
+                const productsDiv = document.getElementById('productsList');
+                if (products.length === 0) {
+                    productsDiv.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <h3>No products yet</h3>
+                            <p>Add your first product to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                productsDiv.innerHTML = products.map(product => `
+                    <div class="product-card ${product.stock_status === 'LOW' ? 'low-stock' : ''}">
+                        <div class="product-header">
+                            <div class="product-name">${product.name}</div>
+                            <span class="stock-badge ${product.stock_status === 'LOW' ? 'stock-low' : 'stock-ok'}">
+                                ${product.stock_status === 'LOW' ? '⚠️ LOW' : '✅ OK'}
+                            </span>
+                        </div>
+                        <div class="product-details">
+                            <p><strong>SKU:</strong> ${product.sku}</p>
+                            <p><strong>Category:</strong> ${getCategoryIcon(product.category)} ${product.category}</p>
+                            <p><strong>Stock:</strong> ${product.quantity} (Min: ${product.min_stock})</p>
+                            <p><strong>Price:</strong> $${product.price}</p>
+                            <p><strong>Supplier:</strong> ${product.supplier || 'N/A'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+        
+        function getCategoryIcon(category) {
+            const icons = {
+                electronics: '📱',
+                clothing: '👕',
+                books: '📚',
+                home: '🏠',
+                sports: '⚽'
+            };
+            return icons[category] || '📦';
+        }
+        
+        async function loadStockManagement() {
+            try {
+                const response = await fetch('/api/products');
+                products = await response.json();
+                
+                const stockDiv = document.getElementById('stockProducts');
+                stockDiv.innerHTML = products.map(product => `
+                    <div class="product-card">
+                        <div class="product-header">
+                            <div class="product-name">${product.name}</div>
+                            <div style="color: #00d4ff; font-weight: 600;">Stock: ${product.quantity}</div>
+                        </div>
+                        <div class="stock-controls">
+                            <select id="type-${product.id}">
+                                <option value="IN">📥 In</option>
+                                <option value="OUT">📤 Out</option>
+                            </select>
+                            <input type="number" id="qty-${product.id}" placeholder="Qty" min="1">
+                            <input type="text" id="reason-${product.id}" placeholder="Reason">
+                            <button class="btn btn-primary" onclick="updateStock(${product.id})">
+                                <i class="fas fa-sync"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading stock management:', error);
+            }
+        }
+        
+        async function updateStock(productId) {
+            const type = document.getElementById(`type-${productId}`).value;
+            const quantity = document.getElementById(`qty-${productId}`).value;
+            const reason = document.getElementById(`reason-${productId}`).value;
+            
+            if (!quantity) return;
+            
+            try {
+                await fetch(`/api/stock/${productId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, quantity: parseInt(quantity), reason })
+                });
+                
+                loadStockManagement();
+            } catch (error) {
+                console.error('Error updating stock:', error);
+            }
+        }
+        
+        async function loadAlerts() {
+            try {
+                const response = await fetch('/api/alerts');
+                const alerts = await response.json();
+                
+                const alertsDiv = document.getElementById('alertsList');
+                if (alerts.length === 0) {
+                    alertsDiv.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle" style="color: #51cf66;"></i>
+                            <h3>All good! 🎉</h3>
+                            <p>No low stock alerts at the moment</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                alertsDiv.innerHTML = alerts.map(product => `
+                    <div class="alert-item">
+                        <div class="alert-content">
+                            <h4>${product.name} (${product.sku})</h4>
+                            <p>Current: ${product.quantity} | Minimum: ${product.min_stock}</p>
+                        </div>
+                        <button class="btn btn-warning" onclick="quickRestock(${product.id})">
+                            <i class="fas fa-plus"></i> Quick Restock
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+            }
+        }
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/products');
+                products = await response.json();
+                
+                const totalProducts = products.length;
+                const lowStock = products.filter(p => p.stock_status === 'LOW').length;
+                const totalValue = products.reduce((sum, p) => sum + (p.quantity * p.price), 0);
+                
+                document.getElementById('dashboardStats').innerHTML = `
+                    <div class="stat-card primary">
+                        <h3>${totalProducts}</h3>
+                        <p><i class="fas fa-box"></i> Total Products</p>
+                    </div>
+                    <div class="stat-card danger">
+                        <h3>${lowStock}</h3>
+                        <p><i class="fas fa-exclamation-triangle"></i> Low Stock Items</p>
+                    </div>
+                    <div class="stat-card success">
+                        <h3>$${totalValue.toFixed(2)}</h3>
+                        <p><i class="fas fa-dollar-sign"></i> Total Inventory Value</p>
+                    </div>
+                `;
+                
+                const recentDiv = document.getElementById('recentProducts');
+                if (products.length === 0) {
+                    recentDiv.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-plus-circle"></i>
+                            <h3>Get started</h3>
+                            <p>Add products to see your inventory dashboard</p>
+                        </div>
+                    `;
+                } else {
+                    recentDiv.innerHTML = products.slice(0, 6).map(product => `
+                        <div class="product-card ${product.stock_status === 'LOW' ? 'low-stock' : ''}">
+                            <div class="product-header">
+                                <div class="product-name">${product.name}</div>
+                                <span class="stock-badge ${product.stock_status === 'LOW' ? 'stock-low' : 'stock-ok'}">
+                                    ${product.stock_status === 'LOW' ? '⚠️ LOW' : '✅ OK'}
+                                </span>
+                            </div>
+                            <div class="product-details">
+                                <p><strong>Stock:</strong> ${product.quantity}</p>
+                                <p><strong>Value:</strong> $${(product.quantity * product.price).toFixed(2)}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const product = {
+                name: document.getElementById('productName').value,
+                sku: document.getElementById('productSku').value,
+                category: document.getElementById('productCategory').value,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                min_stock: parseInt(document.getElementById('productMinStock').value),
+                price: parseFloat(document.getElementById('productPrice').value),
+                supplier: document.getElementById('productSupplier').value
+            };
+            
+            try {
+                await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                document.getElementById('productForm').reset();
+                loadProducts();
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
+        });
+        
+        // Initialize dashboard
+        loadDashboard();
+    </script>
+</body>
+</html>

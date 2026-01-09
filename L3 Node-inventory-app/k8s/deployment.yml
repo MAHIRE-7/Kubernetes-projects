@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:   
+  name: inv-deployment
+  namespace: inv-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inv-app
+  template:
+    metadata:
+      labels:
+        app: inv-app
+    spec: 
+      containers:
+        - name: inv-container 
+          image: manodayahire/inventory-app:latest
+          ports:
+           - containerPort: 3000
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: inv-configmap
+                  key: DB_HOST
+
+            - name: DB_NAME
+              valueFrom:
+                  configMapKeyRef:
+                    name: inv-configmap
+                    key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: inv-configmap
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: inv-configmap
+                  key: DB_PASSWORD

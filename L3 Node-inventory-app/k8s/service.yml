@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:   
+  name: inv-service
+  namespace: inv-ns
+
+spec:
+  selector:
+    app: inv-app
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: NodePort
