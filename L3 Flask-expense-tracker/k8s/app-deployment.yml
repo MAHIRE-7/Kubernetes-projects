@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: et-ns
+spec:
+  replicas: 2
+  selector: 
+    matchLabels:
+      app: expense-tracker-app
+  template:
+    metadata:
+      labels:
+        app: expense-tracker-app
+    spec:
+      containers:
+        - name: expense-tracker-container
+          image: manodayahire/expense-tracker:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: et-configmap
+                  key: MONGO_HOST
+          

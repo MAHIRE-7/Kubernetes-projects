@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: et-configmap
+  namespace: et-ns
+data: 
+  MONGO_HOST: mongo-service
