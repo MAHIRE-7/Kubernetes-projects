@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>👷 Workers Management Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 12s ease infinite;
+            min-height: 100vh;
+        }
+        
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+            border-radius: 25px;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: white;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .stat-card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .section.hidden { display: none; }
+        
+        .section h2 {
+            margin-bottom: 25px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.8em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-danger { background: #dc3545; color: white; }
+        
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+        
+        .table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .status-active { background: #28a745; color: white; }
+        .status-inactive { background: #6c757d; color: white; }
+        .status-present { background: #28a745; color: white; }
+        .status-absent { background: #dc3545; color: white; }
+        .status-pending { background: #ffc107; color: #333; }
+        .status-completed { background: #28a745; color: white; }
+        
+        .worker-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .worker-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .worker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .worker-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .worker-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .hidden { display: none; }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-hard-hat"></i> Workers Management Pro
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('dashboard')">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="nav-tab" onclick="showSection('workers')">
+                    <i class="fas fa-users"></i> Workers
+                </button>
+                <button class="nav-tab" onclick="showSection('attendance')">
+                    <i class="fas fa-clock"></i> Attendance
+                </button>
+                <button class="nav-tab" onclick="showSection('tasks')">
+                    <i class="fas fa-tasks"></i> Tasks
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Dashboard -->
+        <div id="dashboard" class="section">
+            <h2><i class="fas fa-chart-pie"></i> Dashboard Overview</h2>
+            <div class="dashboard-grid" id="dashboardStats">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3 id="totalWorkers">0</h3>
+                    <p>Total Workers</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-user-check"></i>
+                    <h3 id="activeWorkers">0</h3>
+                    <p>Active Workers</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3 id="todayAttendance">0</h3>
+                    <p>Today's Attendance</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-tasks"></i>
+                    <h3 id="pendingTasks">0</h3>
+                    <p>Pending Tasks</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Workers -->
+        <div id="workers" class="section hidden">
+            <h2><i class="fas fa-user-plus"></i> Worker Management</h2>
+            <form id="workerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" name="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Phone</label>
+                        <input type="tel" name="phone" placeholder="+1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-building"></i> Department</label>
+                        <select name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="HR">Human Resources</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Operations">Operations</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"></i> Position</label>
+                        <input type="text" name="position" placeholder="Software Engineer" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Salary</label>
+                        <input type="number" name="salary" placeholder="50000" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Address</label>
+                        <textarea name="address" rows="2" placeholder="Full address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-cogs"></i> Skills (comma separated)</label>
+                        <input type="text" name="skills" placeholder="JavaScript, React, Node.js">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Worker
+                </button>
+            </form>
+            
+            <div id="workersList"></div>
+        </div>
+        
+        <!-- Attendance -->
+        <div id="attendance" class="section hidden">
+            <h2><i class="fas fa-clock"></i> Attendance Management</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Select Worker</label>
+                    <select id="attendanceWorker">
+                        <option value="">Select Worker</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Date</label>
+                    <input type="date" id="attendanceDate" value="">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-check-circle"></i> Status</label>
+                    <select id="attendanceStatus">
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="late">Late</option>
+                        <option value="half-day">Half Day</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="markAttendance()">
+                        <i class="fas fa-check"></i> Mark Attendance
+                    </button>
+                </div>
+            </div>
+            
+            <div id="attendanceList"></div>
+        </div>
+        
+        <!-- Tasks -->
+        <div id="tasks" class="section hidden">
+            <h2><i class="fas fa-tasks"></i> Task Management</h2>
+            <form id="taskForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-heading"></i> Task Title</label>
+                        <input type="text" name="title" placeholder="Complete project documentation" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Assign To</label>
+                        <select name="assignedTo" id="taskWorker" required>
+                            <option value="">Select Worker</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-exclamation-circle"></i> Priority</label>
+                        <select name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Due Date</label>
+                        <input type="date" name="dueDate">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description</label>
+                        <textarea name="description" rows="3" placeholder="Task description..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Task
+                </button>
+            </form>
+            
+            <div id="tasksList"></div>
+        </div>
+    </div>
+    
+    <script>
+        let workers = [];
+        
+        function showSection(sectionName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+            
+            event.target.classList.add('active');
+            document.getElementById(sectionName).classList.remove('hidden');
+            
+            if (sectionName === 'dashboard') loadDashboard();
+            if (sectionName === 'workers') loadWorkers();
+            if (sectionName === 'attendance') loadAttendance();
+            if (sectionName === 'tasks') loadTasks();
+        }
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/dashboard');
+                const stats = await response.json();
+                
+                document.getElementById('totalWorkers').textContent = stats.totalWorkers;
+                document.getElementById('activeWorkers').textContent = stats.activeWorkers;
+                document.getElementById('todayAttendance').textContent = stats.todayAttendance;
+                document.getElementById('pendingTasks').textContent = stats.pendingTasks;
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        async function loadWorkers() {
+            try {
+                const response = await fetch('/api/workers');
+                workers = await response.json();
+                
+                const workersDiv = document.getElementById('workersList');
+                if (workers.length === 0) {
+                    workersDiv.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); margin-top: 30px;">No workers registered yet.</p>';
+                    return;
+                }
+                
+                workersDiv.innerHTML = `
+                    <h3 style="margin-top: 30px; margin-bottom: 20px; color: white;">Registered Workers</h3>
+                    ${workers.map(worker => `
+                        <div class="worker-card">
+                            <div class="worker-header">
+                                <div class="worker-name">${worker.name}</div>
+                                <span class="status-badge status-${worker.status}">${worker.status}</span>
+                            </div>
+                            <div class="worker-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${worker.email}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-building"></i>
+                                    <span>${worker.department}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>${worker.position}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>$${worker.salary.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                
+                // Update dropdowns
+                updateWorkerDropdowns();
+            } catch (error) {
+                console.error('Error loading workers:', error);
+            }
+        }
+        
+        function updateWorkerDropdowns() {
+            const attendanceSelect = document.getElementById('attendanceWorker');
+            const taskSelect = document.getElementById('taskWorker');
+            
+            const options = workers.map(worker => 
+                `<option value="${worker._id}">${worker.name} - ${worker.department}</option>`
+            ).join('');
+            
+            attendanceSelect.innerHTML = '<option value="">Select Worker</option>' + options;
+            taskSelect.innerHTML = '<option value="">Select Worker</option>' + options;
+        }
+        
+        async function loadAttendance() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('attendanceDate').value = today;
+                
+                const response = await fetch(`/api/attendance?date=${today}`);
+                const attendance = await response.json();
+                
+                const attendanceDiv = document.getElementById('attendanceList');
+                if (attendance.length === 0) {
+                    attendanceDiv.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); margin-top: 30px;">No attendance records for today.</p>';
+                    return;
+                }
+                
+                attendanceDiv.innerHTML = `
+                    <h3 style="margin-top: 30px; margin-bottom: 20px; color: white;">Today's Attendance</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Worker</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${attendance.map(record => `
+                                    <tr>
+                                        <td>${record.workerId.name}</td>
+                                        <td>${record.workerId.department}</td>
+                                        <td><span class="status-badge status-${record.status}">${record.status}</span></td>
+                                        <td>${record.checkIn ? new Date(record.checkIn).toLocaleTimeString() : '-'}</td>
+                                        <td>${record.checkOut ? new Date(record.checkOut).toLocaleTimeString() : '-'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading attendance:', error);
+            }
+        }
+        
+        async function markAttendance() {
+            const workerId = document.getElementById('attendanceWorker').value;
+            const date = document.getElementById('attendanceDate').value;
+            const status = document.getElementById('attendanceStatus').value;
+            
+            if (!workerId) {
+                alert('Please select a worker');
+                return;
+            }
+            
+            try {
+                await fetch('/api/attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ workerId, status })
+                });
+                
+                alert('Attendance marked successfully!');
+                loadAttendance();
+            } catch (error) {
+                alert('Error marking attendance: ' + error.message);
+            }
+        }
+        
+        async function loadTasks() {
+            try {
+                const response = await fetch('/api/tasks');
+                const tasks = await response.json();
+                
+                const tasksDiv = document.getElementById('tasksList');
+                if (tasks.length === 0) {
+                    tasksDiv.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); margin-top: 30px;">No tasks created yet.</p>';
+                    return;
+                }
+                
+                tasksDiv.innerHTML = `
+                    <h3 style="margin-top: 30px; margin-bottom: 20px; color: white;">All Tasks</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Assigned To</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tasks.map(task => `
+                                    <tr>
+                                        <td>${task.title}</td>
+                                        <td>${task.assignedTo.name}</td>
+                                        <td><span class="status-badge status-${task.priority}">${task.priority}</span></td>
+                                        <td><span class="status-badge status-${task.status}">${task.status}</span></td>
+                                        <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+        
+        document.getElementById('workerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            if (data.skills) {
+                data.skills = data.skills.split(',').map(s => s.trim());
+            }
+            
+            try {
+                const response = await fetch('/api/workers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Worker added successfully!');
+                    e.target.reset();
+                    loadWorkers();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                alert('Error adding worker: ' + error.message);
+            }
+        });
+        
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Task created successfully!');
+                    e.target.reset();
+                    loadTasks();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                alert('Error creating task: ' + error.message);
+            }
+        });
+        
+        // Initialize
+        loadDashboard();
+        loadWorkers();
+    </script>
+</body>
+</html>

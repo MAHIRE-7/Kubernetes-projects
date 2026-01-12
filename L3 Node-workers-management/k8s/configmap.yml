@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wm-config
+  namespace: wm-ns
+data:
+  MONGO_URL: mongodb://mongo-service:27017/workers
