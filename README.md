@@ -18,6 +18,8 @@ K8s/
 
 ## Projects
 
+
+
 ### L1 Simple-nginx-app
 Basic nginx application deployment demonstrating:
 - Pod creation and management
