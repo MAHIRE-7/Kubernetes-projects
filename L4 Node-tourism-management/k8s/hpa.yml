@@ -1,0 +1,19 @@
+apiversion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tm-hpa
+  namespace: tm-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: tm-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
