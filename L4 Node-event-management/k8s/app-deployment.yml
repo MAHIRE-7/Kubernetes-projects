@@ -1,0 +1,50 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: app-deployment 
+  namespace: em-ns
+spec:
+  selector:
+    matchLabels:
+      app: em-app
+  template:
+    metadata:
+      labels:
+        app: em-app
+    spec:
+      containers:
+      - name: em-container
+        image: manodayahire/event-management:v1
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MYSQL_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: em-config
+              key: MYSQL_HOST
+        - name: MYSQL_PORT
+          valueFrom: 
+            configMapKeyRef:
+              name: em-config
+              key: MYSQL_PORT
+        - name: MYSQL_USER
+          valueFrom: 
+            configMapKeyRef:
+              name: em-config
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom: 
+            configMapKeyRef:
+              name: em-config
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom: 
+            configMapKeyRef:
+              name: em-config
+              key: MYSQL_DATABASE
+        - name: MONGO_HOST
+          valueFrom:      
+            configMapKeyRef:
+              name: em-config
+              key: MONGO_HOST

@@ -1,0 +1,21 @@
+{
+  "name": "event-management-platform",
+  "version": "1.0.0",
+  "description": "Smart Event Management Platform with dual database architecture",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "mongoose": "^7.5.0",
+    "bcrypt": "^5.1.0",
+    "express-session": "^1.17.3",
+    "ejs": "^3.1.9"
+  },
+  "keywords": ["event", "management", "nodejs", "mongodb", "mysql"],
+  "author": "Event Platform",
+  "license": "MIT"
+}

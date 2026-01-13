@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap   
+
+metadata:
+  name: em-config 
+  namespace: em-ns
+data:
+  MYSQL_HOST: mysql-service
+  MYSQL_PORT: "3306"
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root 
+  MYSQL_DATABASE: event_db
+  MONGO_HOST: mongo-service
