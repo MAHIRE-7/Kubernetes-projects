@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-management-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hospital-management-app
+  template:
+    metadata:
+      labels:
+        app: hospital-management-app
+    spec:
+      containers:
+      - name: hospital-management-app
+        image: hospital-management:latest
+        
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        env:
+        - name: MYSQL_HOST
+          value: "mysql-service"
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "hospital_db"
+        - name: MONGO_HOST
+          value: "mongodb-service"
+        - name: MONGO_PORT
+          value: "27017"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hospital-management-service
+spec:
+  type: NodePort
+  selector:
+    app: hospital-management-app
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30230
