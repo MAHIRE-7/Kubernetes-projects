@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: white; font-size: 2.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .nav { display: flex; gap: 15px; }
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
+        .product-price { font-size: 1.1rem; font-weight: bold; color: #ff6b6b; margin: 10px 0; }
+        .auth-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: white; margin-bottom: 8px; font-weight: 500; }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+        .form-group input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .hidden { display: none; }
+        .cart-count {
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 E-Commerce Store</h1>
+            <div class="nav" id="nav">
+                <button class="btn" onclick="showLogin()">Login</button>
+                <button class="btn" onclick="showRegister()">Register</button>
+            </div>
+        </div>
+
+        <!-- Auth Section -->
+        <div class="glass-card hidden" id="authSection">
+            <div class="auth-form">
+                <h2 style="color: white; text-align: center; margin-bottom: 20px;" id="authTitle">Login</h2>
+                <form id="authForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group hidden" id="emailGroup">
+                        <label>Email</label>
+                        <input type="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="glass-card" id="productsSection">
+            <h2 style="color: white; margin-bottom: 20px;">Products</h2>
+            <div class="products-grid" id="productsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';  // Use proxy - frontend server forwards to backend
+        
+        let token = localStorage.getItem('token');
+        let cart = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                
+                const productsList = document.getElementById('productsList');
+                productsList.innerHTML = data.products.map(product => `
+                    <div class="product-card">
+                        <div class="product-name">${product.name}</div>
+                        <div style="opacity: 0.8; margin-bottom: 10px;">${product.description}</div>
+                        <div class="product-price">$${product.price}</div>
+                        <div style="opacity: 0.8; margin-bottom: 10px;">Stock: ${product.stock}</div>
+                        <button class="btn" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
+                            Add to Cart
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Login';
+            document.getElementById('emailGroup').classList.add('hidden');
+            document.getElementById('authForm').onsubmit = handleLogin;
+        }
+
+        function showRegister() {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Register';
+            document.getElementById('emailGroup').classList.remove('hidden');
+            document.getElementById('authForm').onsubmit = handleRegister;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    token = result.token;
+                    localStorage.setItem('token', token);
+                    updateNav(result.user.username);
+                    document.getElementById('authSection').classList.add('hidden');
+                    alert('Login successful!');
+                } else {
+                    alert('Login failed');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('Registration successful! Please login.');
+                    showLogin();
+                } else {
+                    alert('Registration failed');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        }
+
+        function updateNav(username) {
+            document.getElementById('nav').innerHTML = `
+                <span style="color: white;">Welcome, ${username}!</span>
+                <button class="btn" onclick="viewCart()">Cart <span class="cart-count">${cart.length}</span></button>
+                <button class="btn" onclick="logout()">Logout</button>
+            `;
+        }
+
+        function addToCart(id, name, price) {
+            if (!token) {
+                alert('Please login to add items to cart');
+                return;
+            }
+            cart.push({ id, name, price });
+            alert(`${name} added to cart!`);
+            if (document.getElementById('nav').innerHTML.includes('Welcome')) {
+                updateNav(localStorage.getItem('username') || 'User');
+            }
+        }
+
+        function viewCart() {
+            if (cart.length === 0) {
+                alert('Cart is empty');
+                return;
+            }
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            alert(`Cart Items:\n${cart.map(item => `${item.name} - $${item.price}`).join('\n')}\n\nTotal: $${total}`);
+        }
+
+        function logout() {
+            token = null;
+            cart = [];
+            localStorage.removeItem('token');
+            location.reload();
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
