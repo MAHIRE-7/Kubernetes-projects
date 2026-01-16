@@ -15,9 +15,15 @@ spec:
       containers:
       - name: frontend
         image: manodayahire/ecommerce-frontend:latest
-        
         ports:
         - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100Mi"
+          limits:
+            memory: "512Mi"
+            cpu: "200Mi"
 ---
 apiVersion: v1
 kind: Service
