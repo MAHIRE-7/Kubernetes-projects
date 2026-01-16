@@ -18,3 +18,10 @@ spec:
         image: manodayahire/flask-calculator:latest
         ports:
         - containerPort: 5000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100M"
+          limits:
+            memory: "512Mi"
+            cpu: "200M"
