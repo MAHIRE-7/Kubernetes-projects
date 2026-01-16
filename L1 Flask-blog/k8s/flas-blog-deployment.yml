@@ -17,3 +17,10 @@ spec:
           image: manodayahire/flask-blog-app
           ports:
             - containerPort: 5000
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "200Mi"
