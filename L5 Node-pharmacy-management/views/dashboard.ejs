@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Management Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: white; font-size: 2.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .nav { display: flex; gap: 15px; }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .nav a:hover { background: rgba(255, 255, 255, 0.3); }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 5px; }
+        .welcome { color: white; margin-bottom: 20px; }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .action-card:hover { transform: translateY(-5px); }
+        .action-icon { font-size: 3rem; margin-bottom: 15px; }
+        .action-title { font-size: 1.2rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💊 Pharmacy Management</h1>
+            <div class="nav">
+                <a href="/medicines">Medicines</a>
+                <a href="/prescriptions">Prescriptions</a>
+                <a href="/sales">Sales</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+        
+        <div class="welcome">
+            <h2>Welcome, <%= user.username %>! 👨‍⚕️</h2>
+            <p>Role: <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
+        </div>
+        
+        <div class="glass-card">
+            <h2 style="color: white; margin-bottom: 20px;">Dashboard Statistics</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value"><%= stats.totalMedicines %></div>
+                    <div>Total Medicines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value"><%= stats.totalPrescriptions %></div>
+                    <div>Prescriptions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value"><%= stats.totalSales %></div>
+                    <div>Total Sales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ff6b6b;"><%= stats.lowStock %></div>
+                    <div>Low Stock Items</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h2 style="color: white; margin-bottom: 20px;">Quick Actions</h2>
+            <div class="quick-actions">
+                <div class="action-card" onclick="window.location.href='/medicines'">
+                    <div class="action-icon">💊</div>
+                    <div class="action-title">Manage Medicines</div>
+                    <p>Add, update, and track medicine inventory</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='/prescriptions'">
+                    <div class="action-icon">📋</div>
+                    <div class="action-title">Prescriptions</div>
+                    <p>Process and manage prescriptions</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='/sales'">
+                    <div class="action-icon">💰</div>
+                    <div class="action-title">Sales</div>
+                    <p>Record sales and generate reports</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

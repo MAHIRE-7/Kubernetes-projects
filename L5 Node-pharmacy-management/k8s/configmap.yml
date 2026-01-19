@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pharmacy-configmap 
+  namespace: ph-ns
+data:
+  MYSQL_HOST: "mysql-service"
+  MYSQL_PORT: "3306"   
+  MYSQL_USER: "root"
+  MYSQL_PASSWORD: "root"
+  MYSQL_DATABASE: "pharmacy_db"
+  MONGO_HOST: "mongo-service"

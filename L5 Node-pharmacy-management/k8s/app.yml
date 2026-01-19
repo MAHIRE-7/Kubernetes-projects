@@ -1,0 +1,81 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ph-ns 
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: pharmacy-app
+  namespace: ph-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pharmacy-app
+  template:
+    metadata:
+      labels:
+        app: pharmacy-app
+    spec:
+      containers:
+        - name: pharmacy-app-container
+          image: manodayahire/pharmacy-app:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MYSQL_HOST
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MYSQL_PORT
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MYSQL_DATABASE
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pharmacy-configmap
+                  key: MONGO_HOST
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: pharmacy-service
+  namespace: ph-ns
+spec:
+  selector:
+    app: pharmacy-app
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 32001
+      protocol: TCP
+  type: NodePort

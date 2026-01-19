@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: ph-ns
+spec:
+  selector:
+    matchLabels:
+      db: mysql
+  template:
+    metadata:
+      labels:
+        db: mysql
+    spec:
+      containers:
+        - name: mysql-container
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_DATABASE
+              value: "pharmacy_db"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-service 
+  namespace: ph-ns
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+  selector:
+    db: mysql
+  type: ClusterIP
