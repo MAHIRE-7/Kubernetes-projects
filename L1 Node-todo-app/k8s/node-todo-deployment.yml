@@ -17,6 +17,13 @@ spec:
         image:  manodayahire/node-todo-app:latest
         ports:
         - containerPort: 3000
+        resource:
+          requests:
+            memory: "256Mi"
+            cpu: "100Mi"
+          limits:
+            memory: "512Mi"
+            cpu: "200Mi"
         
 
     
