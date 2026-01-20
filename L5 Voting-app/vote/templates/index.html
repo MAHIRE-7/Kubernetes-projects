@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting App</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin: 50px; }
+        .vote-btn { padding: 20px 40px; margin: 20px; font-size: 18px; cursor: pointer; }
+        .cats { background: #ff6b6b; color: white; border: none; }
+        .dogs { background: #4ecdc4; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>Vote for your favorite!</h1>
+    <form method="post" action="/vote">
+        <button type="submit" name="vote" value="cats" class="vote-btn cats">Cats</button>
+        <button type="submit" name="vote" value="dogs" class="vote-btn dogs">Dogs</button>
+    </form>
+</body>
+</html>

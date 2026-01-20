@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting Results</title>
+    <style>
+        body { font-family: Arial; text-align: center; margin: 50px; }
+        .result { margin: 20px; padding: 20px; border-radius: 10px; }
+        .cats { background: #ff6b6b; color: white; }
+        .dogs { background: #4ecdc4; color: white; }
+        .count { font-size: 48px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Live Voting Results</h1>
+    <div class="result cats">
+        <h2>Cats</h2>
+        <div class="count" id="cats-count">0</div>
+    </div>
+    <div class="result dogs">
+        <h2>Dogs</h2>
+        <div class="count" id="dogs-count">0</div>
+    </div>
+
+    <script>
+        function updateResults() {
+            fetch('/results')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cats-count').textContent = data.cats;
+                    document.getElementById('dogs-count').textContent = data.dogs;
+                });
+        }
+        
+        updateResults();
+        setInterval(updateResults, 1000);
+    </script>
+</body>
+</html>
